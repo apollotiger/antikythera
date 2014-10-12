@@ -1,12 +1,6 @@
 WIDTH = 288
 HEIGHT = 336
 svg = d3.select('#canvas').append('svg:svg').attr('width', WIDTH).attr('height', HEIGHT)
-inversionMatrix = """
-1 0 0 0 0
-0 1 0 0 0
-0 0 1 0 0
-1 1 1 0 0
-"""
 
 drawAstronomical = () ->
     d3.selectAll('svg > *').remove()
@@ -22,19 +16,15 @@ drawAstronomical = () ->
     centerPosition = {x: WIDTH / 2, y: HEIGHT / 2}
 
     # draw dawn and dusk lines
-    sunPosition = (13 + (7 / 60)) / 12 * Math.PI
-    moonPosition = (3 + (7 / 60)) / 12 * Math.PI
     venusRadius = WIDTH * 0.3
     marsRadius = WIDTH * 0.35
     jupiterRadius = WIDTH * 0.4
-    marsPosition = (18 + (15 / 60)) / 12 * Math.PI
-    jupiterPosition = (21 + (15 / 60)) / 12 * Math.PI
     venusSize = 20
     marsSize = 20
     jupiterSize = 20
     sunWidth = 18
     astroGroup = svg.append('g').attr('class', 'astronomical')
-    $.ajax({url: '/horizon?lat=37:52:18&lon=-122:16:18', cached: false})
+    $.ajax({url: '/horizon', data: {lat: '37:52:18', lon: '-122:16:18'}, cached: false})
      .done((data) ->
          sunrise = data.rise_angle - (7 / 12 * Math.PI)
          sunset = data.set_angle - (7 / 12 * Math.PI)
@@ -47,7 +37,7 @@ drawAstronomical = () ->
 
 
 
-    $.ajax({url: '/angle?body=sun&lat=37:52:18&lon=-122:16:18', cached: false})
+    $.ajax({url: '/angle', data: {body: 'sun', lat: '37:52:18', lon: '-122:16:18'}, cached: false})
      .done((data) ->
          sunPosition = data.angle
          astroGroup.append('path')
@@ -58,7 +48,7 @@ drawAstronomical = () ->
                    .attr('fill', 'white')
     )
 
-    $.ajax({url: '/angle?body=moon&lat=37:52:18&lon=-122:16:18', cached: false})
+    $.ajax({url: '/angle', data: {body: 'moon', lat: '37:52:18', lon: '-122:16:18'}, cached: false})
      .done((data) ->
          moonPosition = data.angle
          astroGroup.append('path')
@@ -69,7 +59,7 @@ drawAstronomical = () ->
                    .attr('fill', 'black')
     )
 
-    $.ajax({url: '/angle?body=venus&lat=37:52:18&lon=-122:16:18', cached: false})
+    $.ajax({url: '/angle', data: {body: 'venus', lat: '37:52:18', lon: '-122:16:18'}, cached: false})
      .done((data) ->
          venusPosition = data.angle
          astroGroup.append('path')
@@ -80,7 +70,7 @@ drawAstronomical = () ->
                    .attr('fill', 'white')
     )
 
-    $.ajax({url: '/angle?body=mars&lat=37:52:18&lon=-122:16:18', cached: false})
+    $.ajax({url: '/angle', data: {body: 'mars', lat: '37:52:18', lon: '-122:16:18'}, cached: false})
      .done((data) ->
          marsPosition = data.angle
          astroGroup.append('path')
@@ -92,7 +82,7 @@ drawAstronomical = () ->
     )
 
 
-    $.ajax({url: '/angle?body=jupiter&lat=37:52:18&lon=-122:16:18', cached: false})
+    $.ajax({url: '/angle', data: {body: 'jupiter', lat: '37:52:18', lon: '-122:16:18'}, cached: false})
      .done((data) ->
          jupiterPosition = data.angle
          astroGroup.append('rect')
