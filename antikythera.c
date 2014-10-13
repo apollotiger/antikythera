@@ -1,28 +1,28 @@
 #include <pebble.h>
+#define HMS_RADIUS 27
 #define HOUR_RADIUS 10
 #define HOUR_THICKNESS 3
+#define JUPITER 4
+#define JUPITER_RADIUS 75
+#define JUPITER_SIZE 7
+#define MARS 3
+#define MARS_RADIUS 63
+#define MARS_SIZE 7
 #define MINUTE_RADIUS 16
 #define MINUTE_THICKNESS 3
+#define MOON 1
+#define MOON_FILL GColorBlack
+#define MOON_STROKE GColorWhite
+#define MOON_THICKNESS 10
 #define SECOND_RADIUS 23
 #define SECOND_THICKNESS 3
-#define HMS_RADIUS 27
 #define SUN 0
-#define MOON 1
-#define VENUS 2
-#define MARS 3
-#define JUPITER 4
-#define SUN_THICKNESS 10
-#define SUN_STROKE GColorBlack
 #define SUN_FILL GColorWhite
-#define MOON_THICKNESS 10
-#define MOON_STROKE GColorWhite
-#define MOON_FILL GColorBlack
-#define VENUS_SIZE 7
+#define SUN_STROKE GColorBlack
+#define SUN_THICKNESS 10
+#define VENUS 2
 #define VENUS_RADIUS 32
-#define MARS_SIZE 7
-#define MARS_RADIUS 63
-#define JUPITER_SIZE 7
-#define JUPITER_RADIUS 75
+#define VENUS_SIZE 7
 
 static Window *window;
 static Layer *timeLayer;
@@ -170,7 +170,7 @@ void project_gpoint_to_edges(GPoint *point, Layer *layer, int angle) {
   GRect bounds = layer_get_bounds(layer);
   const GPoint center = grect_center_point(&bounds);
   angle %= TRIG_MAX_ANGLE;
-  
+
   if (angle <= angle_45 || angle > angle_45 * 7) {
     point->x = center.x + bounds.size.w / 2;
     point->y = center.y + bounds.size.w * sin_lookup(angle) / cos_lookup(angle) / 2;
@@ -190,13 +190,13 @@ static void graphics_draw_ray(GContext *ctx, Layer *layer, GPoint center, int th
   GRect bounds = layer_get_bounds(layer);
   GPoint overshot = GPoint(0,0);
   GPoint undershot = GPoint(0,0);
-  
+
   thickness_angle = thickness_angle * TRIG_MAX_ANGLE / 360;
   project_gpoint_to_edges(&undershot, layer, theta - thickness_angle);
   project_gpoint_to_edges(&overshot, layer, theta + thickness_angle);
   graphics_context_set_stroke_color(ctx, stroke_color);
   graphics_context_set_fill_color(ctx, fill_color);
-  
+
   GPathInfo ray_info = {
     .num_points = 5,
     .points = (GPoint[]) {
@@ -251,7 +251,7 @@ int get_body_angle(int body) {
 static void draw_astro(Layer *layer, GContext *ctx) {
 /*  time_t now = time(NULL);
   struct tm *t = localtime(&now);*/
-  
+
   // draw dawn & dusk lines (background)
   int sunrise_angle = angle_90 * 0.2;
   int sunset_angle = angle_90 * 0.2;
@@ -272,7 +272,7 @@ static void draw_astro(Layer *layer, GContext *ctx) {
   graphics_context_set_stroke_color(ctx, GColorBlack);
   gpath_draw_filled(ctx, horizon);
   gpath_draw_outline(ctx, horizon);
-  
+
   // draw sun and moon rays
   int sun_angle = get_body_angle(SUN);
   int moon_angle = get_body_angle(MOON);
@@ -281,7 +281,7 @@ static void draw_astro(Layer *layer, GContext *ctx) {
   int jupiter_angle = get_body_angle(JUPITER);
   graphics_draw_ray(ctx, layer, center, sun_angle, SUN_THICKNESS, SUN_STROKE, SUN_FILL);
   graphics_draw_ray(ctx, layer, center, moon_angle, MOON_THICKNESS, MOON_STROKE, MOON_FILL);
-  
+
   // draw planets
   GPath *venus = NULL;
   GPath *mars = NULL;
@@ -298,7 +298,7 @@ static void draw_astro(Layer *layer, GContext *ctx) {
   gpath_rotate_to(mars, TRIG_MAX_ANGLE / 2);
   gpath_draw_filled(ctx, mars);
   gpath_draw_outline(ctx, mars);
-  
+
   GRect jupiter = GRect(center.x + JUPITER_RADIUS * cos_lookup(jupiter_angle) / TRIG_MAX_RATIO,
                         center.y + JUPITER_RADIUS * sin_lookup(jupiter_angle) / TRIG_MAX_RATIO,
                         JUPITER_SIZE * 2,
@@ -316,7 +316,7 @@ static void draw_time(Layer *layer, GContext *ctx) {
     struct tm *t = localtime(&now);
     int secondMarkers = t->tm_sec / 2;
     int i;
-    
+
     graphics_context_set_fill_color(ctx, GColorWhite);
     graphics_fill_circle(ctx, center, HMS_RADIUS);
     graphics_context_set_fill_color(ctx, GColorBlack);
